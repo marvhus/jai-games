@@ -1,0 +1,3 @@
+[submodule "modules/Raylib"]
+	path = modules/Raylib
+	url = git@github.com:CyanMARgh/raylib-jai-universal.git
