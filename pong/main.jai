@@ -5,9 +5,13 @@ PADDLE_WIDTH       :: 0.025;
 PADDLE_HEIGHT      :: 0.250;
 PADDLE_OFFSET      :: 0.025;
 PADDLE_SPEED       :: 1.200;
-DEFAULT_BALL_SPEED :: 0.25;
+DEFAULT_BALL_SPEED :: 0.5;
 MAX_BALL_SPEED     :: 2.0;
 EPSILON            :: 0.0001;
+FONT_SIZE          :: 36;
+FONT_SPACING       :: 5;
+
+alegreya: Font;
 
 State :: enum {
     IDLE;
@@ -59,8 +63,23 @@ draw :: (using data: Game_Data) {
     );
 
     // Draw the score
-    DrawText(to_c_string(tprint("%", p1_score)), 10, 10, 24, WHITE);
-    DrawText(to_c_string(tprint("%", p2_score)), 10, 35, 24, WHITE);
+    p1_score_txt := to_c_string(tprint("%", p1_score));
+    DrawTextEx(alegreya, p1_score_txt,
+        Vector2.{
+            cast(float) normalized_coordinate(PADDLE_WIDTH + PADDLE_OFFSET, WIDTH)
+            - FONT_SPACING
+            + MeasureTextEx(alegreya, p1_score_txt, FONT_SIZE, FONT_SPACING).x, 10
+        }, FONT_SIZE, FONT_SPACING, WHITE
+    );
+
+    p2_score_txt := to_c_string(tprint("%", p2_score));
+    DrawTextEx(alegreya, p2_score_txt,
+        Vector2.{
+            cast(float) WIDTH - xx normalized_coordinate(PADDLE_WIDTH + PADDLE_OFFSET, WIDTH)
+            - FONT_SPACING * 2
+            - MeasureTextEx(alegreya, p2_score_txt, FONT_SIZE, FONT_SPACING).x, 10
+        }, FONT_SIZE, FONT_SPACING, WHITE
+    );
 }
 
 update :: (using data: *Game_Data, dt: float) {
@@ -112,9 +131,8 @@ update_running :: (using data: *Game_Data, dt: float) {
     if is_colliding(new_ball_pos, p1.pos) {
         // Check if collising with player 1
         ball.move_dir.x *= -1;
-        ball.move_dir.y = p1.move_dir.y / 2 * -1;
+        ball.move_dir.y += p1.move_dir.y / 2;
         if ball.speed < MAX_BALL_SPEED - EPSILON {
-            log("%\n", ball.speed);
             ball.speed *= 1.1;
             if ball.speed >= MAX_BALL_SPEED - EPSILON then ball.speed = MAX_BALL_SPEED;
         }
@@ -122,9 +140,8 @@ update_running :: (using data: *Game_Data, dt: float) {
     if is_colliding(new_ball_pos, p2.pos) {
         // Check if colliding with player 2
         ball.move_dir.x *= -1;
-        ball.move_dir.y = p2.move_dir.y / 2 * -1;
+        ball.move_dir.y += p2.move_dir.y / 2;
         if ball.speed < MAX_BALL_SPEED - EPSILON {
-            log("%\n", ball.speed);
             ball.speed *= 1.1;
             if ball.speed >= MAX_BALL_SPEED - EPSILON then ball.speed = MAX_BALL_SPEED;
         }
@@ -161,6 +178,8 @@ main :: () {
     InitWindow(WIDTH, HEIGHT, "pong");
     defer CloseWindow();
     SetTargetFPS(60);
+
+    alegreya = LoadFont("assets/Alegreya-Regular.otf");
 
     data: Game_Data;
     reset_state(*data);
