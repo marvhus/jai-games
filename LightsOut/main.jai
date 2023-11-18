@@ -86,15 +86,12 @@ toggle_around :: (board: *Board, x: u8, y: u8) {
     if x > 0 then toggle(board, x - 1, y    );
 }
 
-reset_board :: (board: *Board, moves: u8 = 7) {
-    if moves > 25 {
-        log_error("Sorry that game is too difficoult\n");
-        exit(1);
-    }
-
+reset_board :: (board: *Board) {
     // Make random actually random (pseudo random)
     now_ms :u64= xx to_milliseconds(current_time_consensus());
     random_seed(now_ms);
+
+    moves := random_get() % 10 + 7;
 
     board.data = 0;
     toggled := Board.{0};
