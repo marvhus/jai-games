@@ -40,3 +40,6 @@ $ ./build.jai - pong run
 ```
 </details>
 
+## Games Included
+- pong
+- LightsOut
