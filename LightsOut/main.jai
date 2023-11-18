@@ -12,7 +12,7 @@ update :: (board: *Board, dt: float) {
         toggle_around(board, x, y);
     }
 
-    if IsKeyPressed(KEY_R) {
+    if IsKeyPressed(KEY_R) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) {
         reset_board(board);
     }
 }
